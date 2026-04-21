@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>D3 Example 3- Basic Bar Chart</title>
+    <script src="https://d3js.org/d3.v4.js" charset="utf-8"></script>
+</head>
+<body>
+
+<script>
+    var popData = [30, 25, 20, 10];
+
+    var margin = { top: 20, right: 20, bottom: 40, left: 80 };
+    var w = 300;
+    var h = 350;
+    var innerW = w - margin.left - margin.right;
+    var innerH = h - margin.top - margin.bottom;
+
+    var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // X Scale
+    var xScale = d3.scaleBand()
+        .domain(popData.map(function(d, i) { return i; }))
+        .range([0, innerW])
+        .padding(0.1);
+
+    // Y Scale
+    var yScale = d3.scaleLinear()
+        .domain([0, d3.max(popData)])
+        .range([innerH, 0]);
+
+    // Bars
+    svg.selectAll("rect")
+        .data(popData)
+        .enter()
+        .append("rect")
+        .attr("x", function(d, i) { return xScale(i); })
+        .attr("y", function(d) { return yScale(d); })
+        .attr("width", xScale.bandwidth())
+        .attr("height", function(d) { return innerH - yScale(d); })
+        .attr("fill", "steelblue");
+
+    // X Axis (no tick labels)
+    svg.append("g")
+        .attr("transform", "translate(0," + innerH + ")")
+        .call(d3.axisBottom(xScale).tickFormat(""));
+
+    // Y Axis
+    svg.append("g")
+        .call(d3.axisLeft(yScale));
+
+    // Y Axis Label
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -innerH / 2)
+        .attr("y", -margin.left + 15)
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .text("Population in Thousands");
+</script>
+
+</body>
+</html>
